@@ -41,8 +41,28 @@ set(CIRCLE_INCLUDE_DIRS
         ${effolkronium_random_SOURCE_DIR}/include
         )
 
-file(GLOB_RECURSE CIRCLE_INCLUDE include/*.h)
-file(GLOB_RECURSE CIRCLE_SRC src/*.cpp)
+set(PORTAL_INCLUDE_DIRS
+        include
+        ${Boost_INCLUDE_DIRS}
+        ${fmt_SOURCE_DIR}/include
+        ${nlohmann_json_SOURCE_DIR}/single_include
+        ${spdlog_SOURCE_DIR}/include
+        )
+
+set(SHARED_INCLUDE_DIRS
+        include
+        ${nlohmann_json_SOURCE_DIR}/single_include
+        ${Boost_INCLUDE_DIRS}
+)
+
+file(GLOB_RECURSE CIRCLE_INCLUDE include/dbat/*.h include/shared/*.h)
+file(GLOB_RECURSE CIRCLE_SRC src/dbat/*.cpp)
+
+file(GLOB_RECURSE PORTAL_SRC src/portal/*.cpp)
+file(GLOB_RECURSE PORTAL_INCLUDE include/portal/*.h include/shared/*.h)
+
+file(GLOB_RECURSE SHARED_SRC src/shared/*.cpp)
+file(GLOB_RECURSE SHARED_INCLUDE include/shared/*.h)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
@@ -60,25 +80,38 @@ set(CIRCLE_LINK_LIBRARIES
         effolkronium_random
         )
 
+set(PORTAL_LINK_LIBRARIES
+        fmt::fmt ${Boost_LIBRARIES}
+)
+
+add_library(shared_lib ${SHARED_INCLUDE} ${SHARED_SRC})
+target_include_directories(shared_lib PUBLIC ${SHARED_INCLUDE_DIRS})
+
 # this is the core library we're making.
-add_library(circlemud ${CIRCLE_INCLUDE} ${CIRCLE_SRC}
-        src/transformation.cpp)
+add_library(circlemud ${CIRCLE_INCLUDE} ${CIRCLE_SRC})
 # everything we make will link to it.
-target_link_libraries(circlemud ${CIRCLE_LINK_LIBRARIES})
+target_link_libraries(circlemud shared_lib ${CIRCLE_LINK_LIBRARIES})
 target_include_directories(circlemud PUBLIC ${CIRCLE_INCLUDE_DIRS})
 
 # the various binaries
-add_executable(circle apps/circle.cpp
-        include/dbat/transformation.h)
-target_link_libraries(circle circlemud ${CIRCLE_LINK_LIBRARIES})
+add_executable(circle apps/circle.cpp)
+target_link_libraries(circle circlemud shared_lib ${CIRCLE_LINK_LIBRARIES})
 target_include_directories(circle PUBLIC ${CIRCLE_INCLUDE_DIRS})
 
 add_executable(analyze apps/analyze.cpp)
-target_link_libraries(analyze circlemud ${CIRCLE_LINK_LIBRARIES})
+target_link_libraries(analyze circlemud shared_lib ${CIRCLE_LINK_LIBRARIES})
 target_include_directories(analyze PUBLIC ${CIRCLE_INCLUDE_DIRS})
 
 add_executable(migrate apps/migrate.cpp)
-target_link_libraries(migrate circlemud ${CIRCLE_LINK_LIBRARIES})
+target_link_libraries(migrate circlemud shared_lib ${CIRCLE_LINK_LIBRARIES})
 target_include_directories(migrate PUBLIC ${CIRCLE_INCLUDE_DIRS})
+
+add_library(portal_lib ${PORTAL_INCLUDE} ${PORTAL_SRC})
+target_link_libraries(portal_lib shared_lib ${PORTAL_LINK_LIBRARIES})
+target_include_directories(portal_lib PUBLIC ${PORTAL_INCLUDE_DIRS})
+
+add_executable(portal apps/portal.cpp)
+target_link_libraries(portal portal_lib shared_lib ${PORTAL_LINK_LIBRARIES})
+target_include_directories(portal PUBLIC ${PORTAL_INCLUDE_DIRS})
 
 SET(circle_link ${CMAKE_INSTALL_PREFIX}/bin/)

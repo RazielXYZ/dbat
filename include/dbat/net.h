@@ -2,7 +2,7 @@
 #include "sysdep.h"
 #include "nlohmann/json.hpp"
 #include "defs.h"
-
+#include "shared/net.h"
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <boost/asio/experimental/concurrent_channel.hpp>
@@ -63,51 +63,11 @@ namespace net {
 
     awaitable<void> runLinkManager();
 
-    enum class Protocol : uint8_t {
-        Telnet = 0,
-        WebSocket = 1
-    };
 
-    enum class ColorType : uint8_t {
-        NoColor = 0,
-        Standard = 1,
-        Xterm256 = 2,
-        TrueColor = 3
-    };
 
-    struct Message {
-        Message();
-        explicit Message(const nlohmann::json& j);
-        std::string cmd;
-        nlohmann::json args;
-        nlohmann::json kwargs;
-        nlohmann::json serialize() const;
-    };
 
-    struct ProtocolCapabilities {
-        Protocol protocol{Protocol::Telnet};
 
-        std::string clientName = "UNKNOWN", clientVersion = "UNKNOWN";
-        std::string hostAddress = "UNKNOWN";
-        std::string encoding;
-        std::vector<std::string> hostNames{};
-        ColorType colorType = ColorType::NoColor;
-        int16_t hostPort{0};
 
-        bool encryption = false;
-        bool utf8 = false;
-        int width = 80, height = 52;
-        bool gmcp = false, msdp = false, mssp = false, mxp = false;
-        bool mccp2 = false, mccp2_active = false, mccp3 = false, mccp3_active = false;
-        bool ttype = false, naws = false, sga = false, linemode = false;
-        bool force_endline = false, oob = false, tls = false;
-        bool screen_reader = false, mouse_tracking = false, vt100 = false;
-        bool osc_color_palette = false, proxy = false, mnes = false;
-
-        void deserialize(const nlohmann::json& j);
-        nlohmann::json serialize();
-        std::string protocolName();
-    };
 
     class Connection;
 

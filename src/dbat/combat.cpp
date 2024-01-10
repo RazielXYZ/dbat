@@ -3673,12 +3673,14 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
     int chance = 0, gmult, gravity, bonus = 1, pscost = 2, difference = 0;
     int64_t gain = 0, pl = 0, ki = 0, st = 0, gaincalc = 0;
 
+	//If damage is greater than a tenth of the opponents health, there's a greater chance to proc the spar gains
     if (dmg > GET_MAX_HIT(vict) / 10) {
         chance = rand_number(20, 100);
     } else if (dmg <= GET_MAX_HIT(vict) / 10) {
         chance = rand_number(1, 75);
     }
 
+	//The chance is reduced if you keep farming in one area via Relaxcount
     if (GET_RELAXCOUNT(ch) >= 464) {
         chance = 0;
     } else if (GET_RELAXCOUNT(ch) >= 232) {
@@ -3687,17 +3689,21 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
         chance -= chance * 0.2;
     }
 
+	//gmult sets the gain for vital increases, based on the character's level x6
     gmult = (GET_LEVEL(ch) * 6);
 
+	//This is then improved by the burden ratio
     auto ratio = ch->getBurdenRatio();
     gmult += gmult * ratio;
 
     if (auto obj = GET_EQ(ch, WEAR_SH); obj) {
+		//If you are using a spar booster
         if (GET_OBJ_VNUM(obj) == 1127) {
             gmult *= 4;
         }
     }
 
+	//Bonuses by room to vital gains
     if (ROOM_FLAGGED(IN_ROOM(ch), ROOM_WORKOUT) || (ROOM_FLAGGED(IN_ROOM(ch), ROOM_HBTC))) {
         if (GET_ROOM_VNUM(IN_ROOM(ch)) >= 19100 && GET_ROOM_VNUM(IN_ROOM(ch)) <= 19199) {
             gmult *= 1.75;
@@ -3715,22 +3721,23 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
         st = large_rand(gmult * .4, gmult * .8);
     }
 
+	//Logic for earning xp through sparring, based on the character's level, the curve is roughly exponential
     if (chance >= rand_number(60, 75)) {
         int64_t num = 0, maxnum = 500000;
         if (GET_LEVEL(ch) >= 70) {
-            num += GET_LEVEL(ch) * 10000;
-        } else if (GET_LEVEL(ch) >= 60) {
-            num += GET_LEVEL(ch) * 6000;
-        } else if (GET_LEVEL(ch) >= 50) {
             num += GET_LEVEL(ch) * 5000;
+        } else if (GET_LEVEL(ch) >= 60) {
+            num += GET_LEVEL(ch) * 3750;
+        } else if (GET_LEVEL(ch) >= 50) {
+            num += GET_LEVEL(ch) * 3000;
         } else if (GET_LEVEL(ch) >= 45) {
             num += GET_LEVEL(ch) * 2500;
         } else if (GET_LEVEL(ch) >= 40) {
-            num += GET_LEVEL(ch) * 2200;
+            num += GET_LEVEL(ch) * 1750;
         } else if (GET_LEVEL(ch) >= 35) {
-            num += GET_LEVEL(ch) * 1500;
+            num += GET_LEVEL(ch) * 1250;
         } else if (GET_LEVEL(ch) >= 30) {
-            num += GET_LEVEL(ch) * 1200;
+            num += GET_LEVEL(ch) * 1000;
         } else if (GET_LEVEL(ch) >= 25) {
             num += GET_LEVEL(ch) * 550;
         } else if (GET_LEVEL(ch) >= 20) {
@@ -3738,21 +3745,40 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
         } else if (GET_LEVEL(ch) >= 15) {
             num += GET_LEVEL(ch) * 250;
         } else if (GET_LEVEL(ch) >= 10) {
-            num += GET_LEVEL(ch) * 100;
+            num += GET_LEVEL(ch) * 120;
         } else if (GET_LEVEL(ch) >= 5) {
-            num += GET_LEVEL(ch) * 50;
+            num += GET_LEVEL(ch) * 70;
         } else {
             num += GET_LEVEL(ch) * 30;
         }
         if (num > maxnum) {
             num = maxnum;
         }
+
+        bool isLethal = !(is_sparring(ch) && is_sparring(vict));
+
+		//Check if victim is NPC or Player, both have different logic here.
         if (vict != nullptr && IS_NPC(vict)) {
-            num = num * 0.7;
-            gaincalc = num * 1.5;
+			//Work out how challenging of an npc to fight this is, if the victim is stronger we want to give more xp. This doesn't affect attributes.
+			float plRatio = GET_MAX_HIT(vict) / GET_MAX_HIT(ch);
+			//Cap the ratio at 10 to prevent truly ridiculous amounts of xp
+			if (plRatio > 10) {
+				plRatio = 10;
+			}
+
+			//Rewarded if your opponent is fighting for the kill
+			float deadlyBonus = isLethal ? 1.5 : 1;
+
+            num = num * 0.7 * plRatio * deadlyBonus;
+            gaincalc = num * 1.5 * plRatio * deadlyBonus;
             type = 3;
         } else if (vict != nullptr && !IS_NPC(vict)) {
-            gaincalc = large_rand(num * .7, num);
+			//Fighting against players has randomised gains. Does not get a bonus for higher power level in spars
+
+			//Rewarded if your opponent is fighting for the kill
+			float deadlyBonus = isLethal ? 2 : 1;
+
+            gaincalc = large_rand(num * .7 * deadlyBonus, num * deadlyBonus);
             if (GET_LEVEL(ch) > GET_LEVEL(vict))
                 difference = GET_LEVEL(ch) - GET_LEVEL(vict);
             else if (GET_LEVEL(ch) < GET_LEVEL(vict))
@@ -3761,6 +3787,7 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
             gaincalc = 0;
         }
         if (vict != nullptr) {
+			//You are penalized for level difference in sparring? Remove this perhaps as it disincentivises oldbies teaching newbies. And it's against the lore, that happens a lot.
             if (difference >= 51) {
                 send_to_char(ch, "The difference in your levels is too great for you to gain anything.\r\n");
                 return;
@@ -3774,6 +3801,7 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
                 gaincalc = gaincalc * 0.50;
             }
             if (!IS_NPC(vict) && !IS_NPC(ch)) {
+				//Logic for instructing and giving a bonus to your sparring partner, it costs practices to the 'victim'
                 if (!IS_NPC(ch) && PRF_FLAGGED(vict, PRF_INSTRUCT)) {
                     if (GET_PRACTICES(vict) > 10) {
                         send_to_char(vict, "You instruct them in proper fighting techniques and strategies.\r\n");
@@ -3786,15 +3814,17 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
             }
         }
 
+		//Saiyan's and Halfies get boosted gains from sparring, Icers and Bio's with the same gene get a debuff
         if (IS_SAIYAN(ch)) {
-            gaincalc = gaincalc + (gaincalc * .50);
+            gaincalc = gaincalc + (gaincalc * .25);
         }
         if (IS_HALFBREED(ch)) {
-            gaincalc = gaincalc + (gaincalc * .40);
+            gaincalc = gaincalc + (gaincalc * .20);
         }
         if (IS_ICER(ch) || (IS_BIO(ch) && (GET_GENOME(ch, 0) == 4 || GET_GENOME(ch, 1) == 4))) {
-            gaincalc = gaincalc - (gaincalc * .20);
+            gaincalc = gaincalc - (gaincalc * .10);
         }
+		//Room bonuses to xp gain
         if (ROOM_FLAGGED(IN_ROOM(ch), ROOM_WORKOUT) || (ROOM_FLAGGED(IN_ROOM(ch), ROOM_HBTC))) {
             if (GET_ROOM_VNUM(IN_ROOM(ch)) >= 19100 && GET_ROOM_VNUM(IN_ROOM(ch)) <= 19199) {
                 gaincalc *= 1.5;
@@ -3802,11 +3832,14 @@ static void spar_helper(struct char_data *ch, struct char_data *vict, int type, 
                 gaincalc *= 1.25;
             }
         }
+		//Multiply by the weight ratio
         gain = gear_exp(ch, gaincalc);
         gain = gain * bonus;
+		//Gain the xp
         gain_exp(ch, gain);
         send_to_char(ch, "@D[@Y+ @G%s @mExp@D]@n ", add_commas(gain).c_str());
 
+		//Handling for awarding vitals to the player
         std::vector<int64_t> stats;
         for (const auto stat: {0, 1, 2}) {
             if (!ch->is_soft_cap(stat, 1.0))
