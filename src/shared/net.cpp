@@ -113,4 +113,17 @@ namespace net {
         if(j.contains("kwargs")) kwargs = j["kwargs"];
     }
 
+    nlohmann::json GameMessage::serialize() const {
+        nlohmann::json j;
+        j["type"] = type;
+        if(!data.empty()) j["data"] = data;
+
+        return j;
+    }
+
+    GameMessage::GameMessage(const nlohmann::json& j) : GameMessage() {
+        if(j.contains("type")) type = j["type"].get<GameMessageType>();
+        if(j.contains("data")) data = j["data"];
+    }
+
 }

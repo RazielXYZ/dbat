@@ -3,7 +3,7 @@
 
 namespace net {
 
-    enum class MessageType : uint8_t {
+    enum class GameMessageType : uint8_t {
         Connect = 0,
         Update = 1,
         Command = 2,
@@ -13,12 +13,21 @@ namespace net {
         Timeout = 6
     };
 
+    struct GameMessage {
+        GameMessage() = default;
+        explicit GameMessage(const nlohmann::json& j);
+        GameMessageType type;
+        nlohmann::json data;
+        [[nodiscard]] nlohmann::json serialize() const;
+    };
+
     struct Message {
         Message();
         explicit Message(const nlohmann::json& j);
-        MessageType type;
-        nlohmann::json data;
-        [[nodiscard]] nlohmann::json serialize() const;
+        std::string cmd;
+        nlohmann::json args;
+        nlohmann::json kwargs;
+        nlohmann::json serialize() const;
     };
 
     enum class Protocol : uint8_t {

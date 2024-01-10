@@ -82,7 +82,7 @@ namespace portal::telnet {
         bool tls;
         boost::beast::flat_buffer readbuf, writebuf, appbuf;
         Channel<TelnetMessage> outMessage;
-        Channel<net::Message> toGame;
+        Channel<net::GameMessage> toGame;
 
         bool started{false};
     };
