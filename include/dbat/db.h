@@ -247,6 +247,8 @@ extern int vnum_weapontype(char *searchname, struct char_data *ch);
 
 extern int vnum_armortype(char *searchname, struct char_data *ch);
 
+extern void migrate_db();
+
 #define REAL 0
 #define VIRTUAL 1
 
@@ -321,24 +323,6 @@ struct zone_data {
     std::set<shop_vnum> shops;
     std::set<trig_vnum> triggers;
     std::set<guild_vnum> guilds;
-
-    void save_all();
-    void save_zone();
-    void save_rooms();
-    void save_mobiles();
-    void save_objects();
-    void save_shops();
-    void save_triggers();
-    void save_guilds();
-    void save_zone_file(const nlohmann::json& j, const std::string& filename);
-
-    std::optional<nlohmann::json> load_zone_file(const std::string& filename);
-    void load_rooms();
-    void load_mobiles();
-    void load_objects();
-    void load_shops();
-    void load_triggers();
-    void load_guilds();
 
 
 };

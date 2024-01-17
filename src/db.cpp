@@ -945,8 +945,6 @@ static bool newStyle = false;
 
 void boot_world() {
 
-    broadcast("Your vision of the world expands across a vast expanse of numerous existences.\r\n");
-
     basic_mud_log("Loading Zones...");
     db_load_zones();
 
@@ -957,22 +955,18 @@ void boot_world() {
         db_load_dgscript_prototypes();
 
         basic_mud_log("Loading mobs and generating index.");
-        broadcast("You feel the presence of many beings around you in this strange journey, but cannot quite see them.\r\n");
         db_load_npc_prototypes();
 
         basic_mud_log("Loading objs and generating index.");
-        broadcast("As the world rushes by, countless treasures flicker through your thoughts. Can they one day be yours?\r\n");
         db_load_item_prototypes();
 
         basic_mud_log("Loading rooms.");
         db_load_rooms();
 
-        broadcast("Names for these wondrous places race through your mind, but you cannot grasp most.\r\n");
         basic_mud_log("Loading areas.");
         db_load_areas();
 
         load_new_database();
-
 
     } else {
         basic_mud_log("Loading legacy world data...");

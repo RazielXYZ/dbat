@@ -1409,6 +1409,7 @@ size_t send_to_char(struct char_data *ch, fmt::string_view format, Args&&... arg
 extern bool spar_friendly(struct char_data *ch, struct char_data *npc);
 
 extern std::string jdump(const nlohmann::json& j);
+extern nlohmann::json jparse(const std::string& s);
 
 extern bool iequals(const std::string& a, const std::string& b);
 extern std::vector<std::string> split(const std::string& s, char delimiter);
