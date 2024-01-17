@@ -9,7 +9,9 @@
 ************************************************************************ */
 
 #include "dbat/objsave.h"
+#ifndef _MSC_VER
 #include "unistd.h"
+#endif
 #include "errno.h"
 #include "dbat/structs.h"
 #include "dbat/comm.h"

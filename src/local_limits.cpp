@@ -10,7 +10,7 @@
 
 #include "dbat/local_limits.h"
 
-#include "../cmake-build-debug/_deps/random-src/test/catch.hpp"
+//#include "../cmake-build-debug/_deps/random-src/test/catch.hpp"
 #include "dbat/utils.h"
 #include "dbat/spells.h"
 #include "dbat/comm.h"

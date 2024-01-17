@@ -1613,7 +1613,7 @@ int8_t ability_mod_value(int abil) {
 }
 
 /* Derived from the SRD under OGL, see ../doc/srd.txt for information */
-int8_t dex_mod_capped(const struct char_data *ch) {
+int8_t dex_mod_capped(struct char_data *ch) {
     int8_t mod;
     struct obj_data *armor;
     mod = ability_mod_value(GET_DEX(ch));

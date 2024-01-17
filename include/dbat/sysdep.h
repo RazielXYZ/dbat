@@ -10,13 +10,15 @@
 #include <cstdarg>
 #include <cstdint>
 #include <cstring>
-#include <strings.h>
 #include <cstdlib>
 #include <cerrno>
 #include <ctime>
 #include <cstddef>
 
+#ifndef _WIN32
+#include <strings.h>
 #include <bsd/string.h>
+#endif
 
 #ifndef SIGUSR1
 #define SIGUSR1 10

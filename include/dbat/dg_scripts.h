@@ -16,6 +16,10 @@
 #include "oasis.h"
 #include <variant>
 
+#ifdef _MSC_VER
+#define __attribute__(a)
+#endif
+
 using DgUID = UID;
 
 std::string toDgUID(const DgUID& uid);

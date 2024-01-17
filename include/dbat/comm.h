@@ -11,6 +11,13 @@
 
 #include "structs.h"
 
+#ifdef _WIN32
+using socklen_t = int;
+struct timeval {
+        long    tv_sec;         /* seconds */
+        long    tv_usec;        /* and microseconds */
+};
+#endif
 
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
 # include <mcheck.h>

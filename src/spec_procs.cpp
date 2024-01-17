@@ -9,7 +9,7 @@
 ************************************************************************ */
 #include "dbat/spec_procs.h"
 
-#include "../cmake-build-debug/_deps/random-src/test/catch.hpp"
+//#include "../cmake-build-debug/_deps/random-src/test/catch.hpp"
 #include "dbat/utils.h"
 #include "dbat/comm.h"
 #include "dbat/interpreter.h"

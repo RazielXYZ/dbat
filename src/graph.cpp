@@ -396,10 +396,10 @@ ACMD(do_track) {
                 /* What's their alignment? */
 				send_to_char(ch, sense_align(i->character).c_str());
 
-                char *blah = sense_location(i->character);
+                const char *blah = sense_location(i->character);
                 send_to_char(ch, "@wLastly you sense that they are at... @C%s@n\n", blah);
                 ++count;
-                free(blah);
+                //free(blah);
             }
         }
         if (count == 0) {

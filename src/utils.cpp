@@ -9,8 +9,11 @@
 ************************************************************************ */
 
 #include <unordered_set>
+
+#ifndef _MSC_VER
 #include <execinfo.h>
 #include <cxxabi.h>
+#endif
 #include <exception>
 #include <iostream>
 #include "dbat/utils.h"
@@ -2469,10 +2472,11 @@ void basic_mud_vlog(const char *format, va_list args) {
     if (format == nullptr)
         format = "SYSERR: log() received a nullptr format.";
 
-    char buf[size + 1];
+    char *buf = new char[size + 1];
     vsnprintf(buf, size + 1, format, args);
-    std::string out(buf);
+    const std::string out(buf);
     logger->info(out);
+    delete[] buf;
 }
 
 
@@ -3304,7 +3308,7 @@ bool OBJWEAR_FLAGGED(struct obj_data *obj, int flag) {
     return obj->wear_flags.test(flag);
 }
 
-bool OBJ_FLAGGED(struct obj_data *obj, int flag) {
+bool OBJ_FLAGGED(const obj_data *obj, int flag) {
     return obj->extra_flags.test(flag);
 }
 
@@ -3368,6 +3372,11 @@ int GET_SPEEDI(struct char_data *ch) {
     return (GET_SPEEDCALC(ch) + GET_SPEEDBONUS(ch) + GET_SPEEDBOOST(ch) + GET_MUTBOOST(ch));
 }
 
+#ifdef _MSC_VER
+void printStackTrace() {
+    //TODO
+}
+#else
 void printStackTrace() {
     void *array[10];
     size_t size;
@@ -3405,6 +3414,7 @@ void printStackTrace() {
     }
     free(strings);
 }
+#endif
 
 bool MOON_TIMECHECK() {
     switch(time_info.day) {

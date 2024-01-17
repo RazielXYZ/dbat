@@ -1611,7 +1611,7 @@ void perform_act(const char *orig, struct char_data *ch, struct obj_data *obj, c
                     i = HSHR(ch);
                     break;
                 case 'S':
-                    CHECK_NULL(vict_obj, HSHR((const struct char_data *) vict_obj));
+                    CHECK_NULL(vict_obj, HSHR((struct char_data *) vict_obj));
                     dg_victim = (struct char_data *) vict_obj;
                     break;
                 case 'e':

@@ -13,6 +13,15 @@
 #include "handler.h"
 #include "spells.h"
 #include "comm.h"
+#include "StringsTemp.h"
+
+#ifdef _MSC_VER
+#define __attribute__(a)
+constexpr size_t PATH_MAX = 4096;
+#endif
+#ifdef _WIN32
+using ssize_t = ptrdiff_t;
+#endif
 
 #define READ_SIZE    256
 
@@ -421,7 +430,7 @@ bool ROOM_FLAGGED(struct room_data *loc, int flag);
 extern bool OBJAFF_FLAGGED(struct obj_data *obj, int flag);
 #define OBJVAL_FLAGGED(obj, flag) (IS_SET(GET_OBJ_VAL((obj), VAL_CONTAINER_FLAGS), (flag)))
 extern bool OBJWEAR_FLAGGED(struct obj_data *obj, int flag);
-extern bool OBJ_FLAGGED(struct obj_data *obj, int flag);
+extern bool OBJ_FLAGGED(const obj_data *obj, int flag);
 #define BODY_FLAGGED(ch, flag) ((ch)->bodyparts.test(flag))
 #define ZONE_FLAGGED(rnum, flag)   (IS_SET_AR(zone_table[(rnum)].zone_flags, flag))
 #define HAS_SPELL_ROUTINE(spl, flag) (IS_SET(SPELL_ROUTINES(spl), (flag)))

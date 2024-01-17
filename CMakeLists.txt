@@ -22,8 +22,6 @@ CPMAddPackage("gh:gabime/spdlog#v1.12.0")
 CPMAddPackage("gh:robinlinden/libsodium-cmake#master")
 CPMAddPackage("gh:effolkronium/random#v1.5.0")
 
-find_package(SQLite3 REQUIRED)
-
 set(CIRCLE_INCLUDE_DIRS
         include
         ${nlohmann_json_SOURCE_DIR}/single_include
