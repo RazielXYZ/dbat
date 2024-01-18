@@ -280,8 +280,5 @@ int add_shop(struct shop_data *nshp) {
 /*-------------------------------------------------------------------*/
 
 int save_shops(zone_rnum zone_num) {
-    auto &z = zone_table[zone_num];
-    dirty_shops.insert(z.shops.begin(), z.shops.end());
-    z.save_shops();
     return true;
 }

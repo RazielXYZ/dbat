@@ -10,10 +10,6 @@
 
 #include <unordered_set>
 
-#ifndef _MSC_VER
-#include <execinfo.h>
-#include <cxxabi.h>
-#endif
 #include <exception>
 #include <iostream>
 #include "dbat/utils.h"
@@ -3372,49 +3368,6 @@ int GET_SPEEDI(struct char_data *ch) {
     return (GET_SPEEDCALC(ch) + GET_SPEEDBONUS(ch) + GET_SPEEDBOOST(ch) + GET_MUTBOOST(ch));
 }
 
-#ifdef _MSC_VER
-void printStackTrace() {
-    //TODO
-}
-#else
-void printStackTrace() {
-    void *array[10];
-    size_t size;
-    char **strings;
-    size = backtrace(array, 10);
-    strings = backtrace_symbols(array, size);
-    for (size_t i = 0; i < size; i++) {
-        // Demangle the name if possible
-        char *mangled_name = nullptr, *offset_begin = nullptr, *offset_end = nullptr;
-        for (char *p = strings[i]; *p; ++p) {
-            if (*p == '(') {
-                mangled_name = p;
-            } else if (*p == '+') {
-                offset_begin = p;
-            } else if (*p == ')' && offset_begin) {
-                offset_end = p;
-                break;
-            }
-        }
-        if (mangled_name && offset_begin && offset_end && mangled_name < offset_begin) {
-            *mangled_name++ = '\0';
-            *offset_begin++ = '\0';
-            *offset_end = '\0';
-            int status;
-            char *real_name = abi::__cxa_demangle(mangled_name, nullptr, nullptr, &status);
-            if (status == 0) {
-                std::cerr << "[bt]: (" << i << ") " << strings[i] << " : " << real_name << "+" << offset_begin << offset_end << std::endl;
-            } else {
-                std::cerr << "[bt]: (" << i << ") " << strings[i] << " : " << mangled_name << "+" << offset_begin << offset_end << std::endl;
-            }
-            free(real_name);
-        } else {
-            std::cerr << "[bt]: (" << i << ") " << strings[i] << std::endl;
-        }
-    }
-    free(strings);
-}
-#endif
 
 bool MOON_TIMECHECK() {
     switch(time_info.day) {

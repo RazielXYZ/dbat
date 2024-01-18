@@ -5,7 +5,6 @@
 #include "dbat/genolc.h"
 #include "dbat/maputils.h"
 #include "dbat/config.h"
-#include "shared/net.h"
 #include <filesystem>
 #include <memory>
 #include <iostream>

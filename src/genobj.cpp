@@ -98,15 +98,6 @@ obj_rnum insert_object(struct obj_data *obj, obj_vnum ovnum) {
 /* ------------------------------------------------------------------------------------------------------------------------------ */
 
 int save_objects(zone_rnum zone_num) {
-    auto z = zone_table.find(zone_num);
-
-    if (z == zone_table.end()) {
-        basic_mud_log("SYSERR: OasisOLC: save_objects: Invalid real zone number %d.", zone_num);
-        return false;
-    }
-
-    dirty_item_prototypes.insert(z->second.objects.begin(), z->second.objects.end());
-    z->second.save_objects();
     return true;
 }
 

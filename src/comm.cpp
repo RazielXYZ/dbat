@@ -73,7 +73,6 @@ int dg_act_check;               /* toggle for act_trigger */
 uint64_t pulse = 0;        /* number of pulses since game start */
 bool fCopyOver;          /* Are we booting in copyover mode? */
 uint16_t port;
-socklen_t mother_desc;
 char *last_act_message = nullptr;
 
 /***********************************************************************
@@ -162,12 +161,10 @@ void heartbeat(uint64_t heart_pulse, double deltaTime) {
             }
             catch(const std::exception &e) {
                 basic_mud_log("Exception while running GameService '%s': %s", s.name.c_str(), e.what());
-                printStackTrace();
                 shutdown_game(1);
             }
             catch(...) {
                 basic_mud_log("Unknown exception while running GameService '%s'", s.name.c_str());
-                printStackTrace();
                 shutdown_game(1);
             }
             auto end = std::chrono::high_resolution_clock::now();
@@ -263,11 +260,9 @@ void runOneLoop(double deltaTime) {
     }
     catch(const std::exception& e) {
         basic_mud_log("Exception while processing input: %s", e.what());
-        printStackTrace();
         shutdown_game(1);
     } catch(...) {
         basic_mud_log("Unknown exception while processing input!");
-        printStackTrace();
         shutdown_game(1);
     }
 
@@ -443,11 +438,9 @@ namespace game {
 
         } catch(std::exception& e) {
             basic_mud_log("Exception in runOneLoop(): %s", e.what());
-            printStackTrace();
             shutdown_game(1);
         } catch(...) {
             basic_mud_log("Unknown exception in runOneLoop()");
-            printStackTrace();
             shutdown_game(1);
         }
     }

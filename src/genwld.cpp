@@ -142,15 +142,6 @@ int delete_room(room_rnum rnum) {
 
 
 int save_rooms(zone_rnum zone_num) {
-    auto z = zone_table.find(zone_num);
-
-    if (z == zone_table.end()) {
-        basic_mud_log("SYSERR: GenOLC: save_rooms: Invalid zone number %d passed!", zone_num);
-        return false;
-    }
-
-    dirty_rooms.insert(z->second.rooms.begin(), z->second.rooms.end());
-    z->second.save_rooms();
     return true;
 }
 

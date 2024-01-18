@@ -230,15 +230,6 @@ int free_mobile(struct char_data *mob) {
 }
 
 int save_mobiles(zone_rnum zone_num) {
-    auto z = zone_table.find(zone_num);
-
-    if (z == zone_table.end()) {
-        basic_mud_log("SYSERR: GenOLC: save_mobiles: Invalid real zone number %d.", zone_num);
-        return false;
-    }
-
-    dirty_npc_prototypes.insert(z->second.mobiles.begin(), z->second.mobiles.end());
-    z->second.save_mobiles();
     return true;
 }
 

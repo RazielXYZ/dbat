@@ -11,14 +11,6 @@
 
 #include "structs.h"
 
-#ifdef _WIN32
-using socklen_t = int;
-struct timeval {
-        long    tv_sec;         /* seconds */
-        long    tv_usec;        /* and microseconds */
-};
-#endif
-
 #if CIRCLE_GNU_LIBC_MEMORY_TRACK
 # include <mcheck.h>
 #endif
@@ -78,7 +70,6 @@ extern void show_help(std::shared_ptr<net::Connection>& co, const char *entry);
 extern uint64_t pulse;
 extern FILE *logfile;
 extern int circle_shutdown, circle_reboot;
-extern socklen_t mother_desc;
 extern uint16_t port;
 extern int buf_switches, buf_largecount, buf_overflows;
 extern int no_specials, scheck;

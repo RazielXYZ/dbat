@@ -13,13 +13,14 @@
 #include "handler.h"
 #include "spells.h"
 #include "comm.h"
-#include "StringsTemp.h"
+
 
 #ifdef _MSC_VER
 #define __attribute__(a)
 constexpr size_t PATH_MAX = 4096;
 #endif
 #ifdef _WIN32
+#include "StringsTemp.h"
 using ssize_t = ptrdiff_t;
 #endif
 
@@ -1195,8 +1196,6 @@ int check_flags_by_name_ar(const std::bitset<N>& bitvector, int numflags, char *
     return false;
 }
 
-
-extern void printStackTrace();
 
 template<typename... Args>
 void send_to_all(fmt::string_view format, Args&&... args) {

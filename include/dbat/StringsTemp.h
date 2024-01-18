@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef _MSC_VER
-
 #define strncasecmp(x,y,z) _strnicmp(x,y,z)
 #define strcasecmp(x,y) _stricmp(x, y)
 
@@ -28,5 +26,3 @@ inline size_t strlcpy(char *dst, const char *src, size_t dsize)
 
 	return(src - osrc - 1);	/* count does not include NUL */
 }
-
-#endif

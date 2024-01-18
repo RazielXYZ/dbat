@@ -70,14 +70,5 @@ int add_guild(struct guild_data *ngld) {
 /*-------------------------------------------------------------------*/
 
 int save_guilds(zone_rnum zone_num) {
-    auto z = zone_table.find(zone_num);
-
-    if (z == zone_table.end())
-    {
-        basic_mud_log("SYSERR: GenOLC: save_guilds: Invalid real zone number %d.", zone_num);
-        return false;
-    }
-
-    dirty_guilds.insert(z->second.guilds.begin(), z->second.guilds.end());
-    z->second.save_guilds();
+    return true;
 }

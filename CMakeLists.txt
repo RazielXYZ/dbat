@@ -15,10 +15,10 @@ include(${CPM_DOWNLOAD_LOCATION})
 
 project(circle)
 
-CPMAddPackage("gh:fmtlib/fmt#9.1.0")
-CPMAddPackage("gh:SRombauts/SQLiteCpp#3.3.0")
-CPMAddPackage("gh:nlohmann/json#v3.11.2")
-CPMAddPackage("gh:gabime/spdlog#v1.12.0")
+CPMAddPackage("gh:fmtlib/fmt#10.2.1")
+CPMAddPackage("gh:SRombauts/SQLiteCpp#3.3.1")
+CPMAddPackage("gh:nlohmann/json#v3.11.3")
+CPMAddPackage("gh:gabime/spdlog#v1.13.0")
 CPMAddPackage("gh:robinlinden/libsodium-cmake#master")
 CPMAddPackage("gh:effolkronium/random#v1.5.0")
 
